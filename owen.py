@@ -1,0 +1,1 @@
+#le premier qui touche à ce fichier et qui s'appelle pas owen son nom sera écrit dans le Death Note
