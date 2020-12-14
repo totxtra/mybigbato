@@ -1,3 +1,3 @@
-# mybigbato
+# WeirdChamp
 
 le caca c delicieu
