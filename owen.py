@@ -9,26 +9,7 @@ import random
 
 #-------------------------------------------------------
 
-
-def difficulte():
-    while True:
-        try:
-            diff = int(input('Choisissez une difficulté de 1 à 3 : '))
-            if not 0 < diff < 4:
-                raise ValueError
-            break
-        except:
-            print('de 1 à 3')
-    return diff
-
-
-def ecran():
-    a = 'ABCDEFGHIJ'
-    ecran = [[[k + str(i + 1), 0, 0] for k in a] for i in range(10)]
-    return ecran
-
-
-def afficher(ecran):  #affichage provisoire de qualité premium
+def afficher(ecran,visible):  #affichage console python
     a = '\n--------------------------------------------\n   | A | B | C | D | E | F | G | H | I | J |\n'
     k = ['A0']
     for i in ecran:
@@ -44,7 +25,7 @@ def afficher(ecran):  #affichage provisoire de qualité premium
                 b += ' +'
             elif k[2] == 1 and k[1] == 0:
                 b += ' x'
-            elif k[1] > 0:
+            elif k[1] > 0 and visible==1:#seulement si on veut que les bateaux soient visibles
                 b += ' ' + str(k[1])
             else:
                 b += ' -'
@@ -56,10 +37,11 @@ def afficher(ecran):  #affichage provisoire de qualité premium
     return a + '--------------------------------------------\n'
 
 
-def recherche(mat):     #|-|3| dans une situation telle que celle-ci, il se peut que l'ia 'oublie' la case du haut,
-    ct = 0              #|2|3| vu qu'elle cherche en priorité à l'horizontale.
-    for a in range(9):  #|2|3| la fonction dernierrecours permet de tirer à côté de là où un bateau à été touché.
-        for b in range(0, 9, 2):
+
+def recherche(mat):     #|-|3| dans une situation telle que celle-ci, il se peut que l'ia 'oublie'
+    ct = 0              #|2|3| la case du haut, vu qu'elle cherche en priorité à l'horizontale.
+    for a in range(9):  #|2|3| la fonction dernierrecours permet de tirer à côté de là où un
+        for b in range(0, 9, 2):#bateau a été touché.
             if a % 2 == 0:
                 b += 1
             if mat[a][b][2] == 1:
@@ -70,9 +52,7 @@ def recherche(mat):     #|-|3| dans une situation telle que celle-ci, il se peut
         return dernierrecours(mat)
 
 
-def rechercheorganisee(
-        mat
-):  #recherche aléatoire mais méthodique (en sautant une case à chaque fois)
+def rechercheorganisee(mat):  #recherche aléatoire mais méthodique (en sautant une case à chaque fois)
     while True:
         try:
             x = random.randint(0, 9)  #|x| |x|
@@ -91,26 +71,18 @@ def rechercheorganisee(
             pass
 
 
-def dernierrecours(
-        mat
-):  #il peut y avoir des occurences où l'ia est perdue, donc on la fait tirer à côté de là où un bateau a été touché
+def dernierrecours(mat):  #il peut y avoir des occurences où l'ia est perdue, donc on la fait tirer à côté de là où un bateau a été touché
     while True:
         try:
-            x = random.randint(0, 9)  #| |x| |
+            x = random.randint(0, 9)      #| |x| |
             y = random.randint(0, 4) * 2  #|x| |x|
-            if x % 2 == 1:  #| |x| |
+            if x % 2 == 1:                #| |x| |
                 y += 1
             if mat[x][y][2] == 1:
                 raise ValueError
             mat[x][y][2] = 1
             ct = 0
-            if mat[x][y + 1][2] == 1 and mat[x][y + 1] > 0:
-                ct = 1
-            if mat[x][y - 1][2] == 1 and mat[x][y - 1] > 0:
-                ct = 1
-            if mat[x + 1][y][2] == 1 and mat[x + 1][y] > 0:
-                ct = 1
-            if mat[x - 1][y][2] == 1 and mat[x - 1][y] > 0:
+            if (mat[x][y + 1][2] == 1 and mat[x][y + 1] > 0) or (mat[x][y - 1][2] == 1 and mat[x][y - 1]) > 0 or (mat[x + 1][y][2] == 1 and mat[x + 1][y] > 0):
                 ct = 1
             if ct == 0:
                 raise ValueError
@@ -258,7 +230,7 @@ def tiria(pIA, diff):
     elif phase == 'touché' and diff > 1:  #valable pour diff 2 et 3, tire autour de la case touchée avec la recherche pour determiner l'orientation du bateau
         cible = pIA[2]
         pIA = rechercheori(ecrania, cible)
-    elif phase == 'traque' and diff > 1:  #valable pour diff 2 et 3, tir d'un côté et de l'autre du bateau touché
+    elif phase == 'traque' and diff > 1:  #valable pour diff 2 et 3, tire d'un côté et de l'autre du bateau touché
         pIA = traque(ecrania, pIA[2], pIA[3], pIA[4], pIA[5])
     else:  #valable pour la phase 'recherche' de diff 2 et pour diff 1. quand on dit facile, on dit VRAIMENT facile.
         pIA = tiriarandom(ecrania)
