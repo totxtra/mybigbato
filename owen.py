@@ -1,18 +1,10 @@
-import brocoli
-import clement
-import csv
-import leaderboard
 import random
-
-#import hugo
-#import replit
-
 #-------------------------------------------------------
 
-def afficher(ecran,visible):  #affichage console python
+def afficher(mat,visible):  #affichage console python
     a = '\n--------------------------------------------\n   | A | B | C | D | E | F | G | H | I | J |\n'
     k = ['A0']
-    for i in ecran:
+    for i in mat:
         c = str(
             int(k[0][1]) + 1
         ) 
@@ -37,7 +29,6 @@ def afficher(ecran,visible):  #affichage console python
     return a + '--------------------------------------------\n'
 
 
-
 def recherche(mat):     #|-|3| dans une situation telle que celle-ci, il se peut que l'ia 'oublie'
     ct = 0              #|2|3| la case du haut, vu qu'elle cherche en priorité à l'horizontale.
     for a in range(9):  #|2|3| la fonction dernierrecours permet de tirer à côté de là où un
@@ -55,13 +46,14 @@ def recherche(mat):     #|-|3| dans une situation telle que celle-ci, il se peut
 def rechercheorganisee(mat):  #recherche aléatoire mais méthodique (en sautant une case à chaque fois)
     while True:
         try:
-            x = random.randint(0, 9)  #|x| |x|
+            x = random.randint(0, 9)   #|x| |x|
             y = random.randint(0,4)*2  #| |x| |
-            if x % 2 == 0:  #|x| |x|
+            if x % 2 == 0:             #|x| |x|
                 y += 1
             if mat[x][y][2] == 1:
                 raise ValueError
             mat[x][y][2] = 1
+            print("l'ia a tiré en ", 'ABCDEFGHIJ'[y],str(x+1))
             if mat[x][y][1] > 0:
                 return mat, 'touché', [x, y]
             else:
@@ -71,7 +63,7 @@ def rechercheorganisee(mat):  #recherche aléatoire mais méthodique (en sautant
             pass
 
 
-def dernierrecours(mat):  #il peut y avoir des occurences où l'ia est perdue, donc on la fait tirer à côté de là où un bateau a été touché
+def dernierrecours(mat):  #il peut y avoir des occurrences où l'ia est perdue, donc on la fait tirer à côté de là où un bateau a été touché
     while True:
         try:
             x = random.randint(0, 9)      #| |x| |
@@ -86,18 +78,10 @@ def dernierrecours(mat):  #il peut y avoir des occurences où l'ia est perdue, d
                 ct = 1
             if ct == 0:
                 raise ValueError
+            print("l'ia a tiré en ", 'ABCDEFGHIJ'[y],str(x+1))
             break
         except:
             pass
-
-
-def parcourir(case):
-    mat = ecran()
-    for i in mat:
-        for k in i:
-            if k[0] == case.upper():
-                return mat.index(i), i.index(k)
-    raise ValueError('valeur de case incorrecte')
 
 
 def rechercheori(mat, cible):  #long car bcp de commentaires et de if
@@ -112,6 +96,7 @@ def rechercheori(mat, cible):  #long car bcp de commentaires et de if
     if y != 9:  #ne pas sortir de la matrice
         if mat[x][y + 1][2] != 1:  #colonne suivante, bateau horizontal ?
             mat[x][y + 1][2] = 1
+            print("l'ia a tiré en ", 'ABCDEFGHIJ'[y+1],str(x+1))
             if mat[x][y + 1][1] > 0:
                 return mat, 'traque', cible, 0, 0, 2
             else:
@@ -119,6 +104,7 @@ def rechercheori(mat, cible):  #long car bcp de commentaires et de if
     if x != 9:
         if mat[x + 1][y][2] != 1:  #ligne suivante, bateau vertical?
             mat[x + 1][y][2] = 1
+            print("l'ia a tiré en ", 'ABCDEFGHIJ'[y],str(x+2))
             if mat[x + 1][y][1] > 0:
                 return mat, 'traque', cible, 1, 0, 2
             else:
@@ -126,6 +112,7 @@ def rechercheori(mat, cible):  #long car bcp de commentaires et de if
     if y != 0:
         if mat[x][y - 1][2] != 1:  #colonne précédente
             mat[x][y - 1][2] = 1
+            print("l'ia a tiré en ", 'ABCDEFGHIJ'[y-1],str(x+1))
             if mat[x][y - 1][1] > 0:
                 return mat, 'traque', cible, 0, 1, -2
             else:
@@ -133,6 +120,7 @@ def rechercheori(mat, cible):  #long car bcp de commentaires et de if
     if x != 0:
         if mat[x - 1][y][2] != 1:  #ligne précédente
             mat[x - 1][y][2] = 1
+            print("l'ia a tiré en ", 'ABCDEFGHIJ'[y],str(x))
             if mat[x - 1][y][1] > 0:
                 return mat, 'traque', cible, 1, 1, -2
             else:
@@ -140,12 +128,12 @@ def rechercheori(mat, cible):  #long car bcp de commentaires et de if
     return mat.recherche()
 
 
-def traque(mat, cible, ori, lim,
-           long):  #longueur due à la profusion de conditions if
+def traque(mat, cible, ori, lim,long):  #longueur due à la profusion de conditions if
     #explication des parametres:
     #cible = case trouvée par la recherche
     #ori=orientation du bateau trouvée en second lieu
     #lim= nombre d'extrémités du bateau trouvées, si l'une d'elles est déjà trouvée, on cherche de l'autre côté
+    #long:
     x = cible[0]  #x=ligne, y = colonne
     y = cible[1]
     if lim == 0:
@@ -159,7 +147,7 @@ def traque(mat, cible, ori, lim,
                 y += long
             else:
                 return traque(mat, cible, ori, 1, -1)
-    else:
+    else: #
         if ori == 1:
             if x + long > -1:
                 x += long
@@ -170,12 +158,15 @@ def traque(mat, cible, ori, lim,
                 y += long
             else:
                 return recherche(mat)
+
+
     if lim == 1:  # si l'une des limites est déjà trouvée, l'ia cherche dans l'autre sens
         long -= 1
     else:
         long += 1
     if mat[x][y][2] != 1:  #tirer si ce n'est pas déjà fait
         mat[x][y][2] = 1
+        print("l'ia a tiré en ", 'ABCDEFGHIJ'[y],str(x+1))
     else:  #si c'est déjà fait, vérifier l'état de la case en question
         if mat[x][y][
                 1] > 0:  #si il y a un bateau dessus, on traque la case suivante
@@ -202,8 +193,9 @@ def tiriarandom(mat):  #recherche 100% aléatoire, peut tirer n'importe où
             if mat[x][y][2] == 1:
                 raise ValueError
             mat[x][y][2] = 1
+            print("l'ia a tiré en ", 'ABCDEFGHIJ'[y],str(x+1))
             if mat[x][y][1] > 0:
-                return mat, 'touché'
+                return mat, 'touché' , [x,y]
             else:
                 return mat, 'recherche'
             break
@@ -211,9 +203,9 @@ def tiriarandom(mat):  #recherche 100% aléatoire, peut tirer n'importe où
             pass
 
 
-def verifpoints(ecran):
+def verifpoints(mat):
     pts = 0
-    for i in ecran:
+    for i in mat:
         for k in i:
             if k[1] > 0 and k[2] == 1:
                 pts += 1
@@ -221,32 +213,20 @@ def verifpoints(ecran):
 
 
 def tiria(pIA, diff):
-    ecrania = pIA[0]
+    ecran = pIA[0]
     phase = pIA[1]
     if phase == 'recherche' and diff == 3:
-        pIA = recherche(ecrania)  # recherche méthodique
+        pIA = recherche(ecran)  # recherche méthodique
     elif phase == 'recherche' and diff == 2:  #recherche aléatoire
-        pIA = tiriarandom(ecrania)
+        pIA = tiriarandom(ecran)
     elif phase == 'touché' and diff > 1:  #valable pour diff 2 et 3, tire autour de la case touchée avec la recherche pour determiner l'orientation du bateau
         cible = pIA[2]
-        pIA = rechercheori(ecrania, cible)
+        pIA = rechercheori(ecran, cible)
     elif phase == 'traque' and diff > 1:  #valable pour diff 2 et 3, tire d'un côté et de l'autre du bateau touché
-        pIA = traque(ecrania, pIA[2], pIA[3], pIA[4], pIA[5])
+        pIA = traque(ecran, pIA[2], pIA[3], pIA[4], pIA[5])
     else:  #valable pour la phase 'recherche' de diff 2 et pour diff 1. quand on dit facile, on dit VRAIMENT facile.
-        pIA = tiriarandom(ecrania)
+        pIA = tiriarandom(ecran)
 
-    ecrania = pIA[0]
-    return ecrania, pIA
+    ecran = pIA[0]
+    return ecran, pIA
 
-
-''''
-def show(txt,key):#txt=fichier
-  reader = csv.DictReader(open(txt,'r'))
-  leaderboard=[dict(row) for row in reader]
-  a=0
-  for i in txt:
-    a+=i[key]
-    a+='\n'
-  return a'''
-#owen.show('leaderboard.csv',nom)
-#print(affichage(ecran(),1))
