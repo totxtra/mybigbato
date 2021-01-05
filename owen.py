@@ -29,9 +29,9 @@ def afficher(mat,visible):  #affichage console python
     return a + '--------------------------------------------\n'
 
 
-def recherche(mat):     #|-|3| dans une situation telle que celle-ci, il se peut que l'ia 'oublie'
-    ct = 0              #|2|3| la case du haut, vu qu'elle cherche en priorité à l'horizontale.
-    for a in range(9):  #|2|3| la fonction dernierrecours permet de tirer à côté de là où un
+def recherche(mat):
+    ct = 0
+    for a in range(9): 
         for b in range(0, 9, 2):#bateau a été touché.
             if a % 2 == 0:
                 b += 1
@@ -46,9 +46,9 @@ def recherche(mat):     #|-|3| dans une situation telle que celle-ci, il se peut
 def rechercheorganisee(mat):  #recherche aléatoire mais méthodique (en sautant une case à chaque fois)
     while True:
         try:
-            x = random.randint(0, 9)   #|x| |x|
-            y = random.randint(0,4)*2  #| |x| |
-            if x % 2 == 0:             #|x| |x|
+            x = random.randint(0, 9)   #| |x| |
+            y = random.randint(0,4)*2  #|x| |x|
+            if x % 2 == 0:             #| |x| |
                 y += 1
             if mat[x][y][2] == 1:
                 raise ValueError
@@ -66,15 +66,15 @@ def rechercheorganisee(mat):  #recherche aléatoire mais méthodique (en sautant
 def dernierrecours(mat):  #il peut y avoir des occurrences où l'ia est perdue, donc on la fait tirer à côté de là où un bateau a été touché
     while True:
         try:
-            x = random.randint(0, 9)      #| |x| |
-            y = random.randint(0, 4) * 2  #|x| |x|
-            if x % 2 == 1:                #| |x| |
+            x = random.randint(0, 9)      #|x| |x|
+            y = random.randint(0, 4) * 2  #| |x| |
+            if x % 2 == 1:                #|x| |x|
                 y += 1
             if mat[x][y][2] == 1:
                 raise ValueError
             mat[x][y][2] = 1
             ct = 0
-            if (mat[x][y + 1][2] == 1 and mat[x][y + 1] > 0) or (mat[x][y - 1][2] == 1 and mat[x][y - 1]) > 0 or (mat[x + 1][y][2] == 1 and mat[x + 1][y] > 0):
+            if (mat[x][y + 1][2] == 1 and mat[x][y + 1] > 0) or (mat[x][y - 1][2] == 1 and mat[x][y - 1]) > 0 or (mat[x + 1][y][2] == 1 and mat[x + 1][y] > 0):#si il y a un bateau dans les alentours
                 ct = 1
             if ct == 0:
                 raise ValueError
@@ -86,13 +86,13 @@ def dernierrecours(mat):  #il peut y avoir des occurrences où l'ia est perdue, 
 
 def rechercheori(mat, cible):  #long car bcp de commentaires et de if
     #l'ia va faire le tour de la cible pour determiner
-    #return matrice,etat,cible,orientation,limite(de chaque coté du bateau, ex: -+++-,la traque se termine une fois que les 2 sont trouvées),long(voir traque())
+    #return matrice,etat,cible,orientation,limite(de chaque coté du bateau, ex: x+++x,la traque se termine une fois que les 2 sont trouvées),long(voir traque())
     print(cible)
     x = cible[0]  #ligne
     y = cible[1]  #colonne
     #les verifications suivantes se font de la sorte:
     #si l'on a pas déjà tiré sur la case en question, on y tire;si ça touche, on passe à la traque
-    #comme les 2 dernieres conditions sont valables si les 2 premières sont fausses, on aura trouvé une limite du bateau.
+    #comme les 2 dernieres conditions sont valables si les 2 premières sont fausses, on aura trouvé une extremité(lim) du bateau.
     if y != 9:  #ne pas sortir de la matrice
         if mat[x][y + 1][2] != 1:  #colonne suivante, bateau horizontal ?
             mat[x][y + 1][2] = 1
@@ -132,8 +132,10 @@ def traque(mat, cible, ori, lim,long):  #longueur due à la profusion de conditi
     #explication des parametres:
     #cible = case trouvée par la recherche
     #ori=orientation du bateau trouvée en second lieu
-    #lim= nombre d'extrémités du bateau trouvées, si l'une d'elles est déjà trouvée, on cherche de l'autre côté
-    #long:
+    #lim = nombre d'extrémités du bateau trouvées, si l'une d'elles est déjà trouvée, on cherche de l'autre côté
+    #-4+44- -> -4++4x -> -4+++- -> -4+++x -> -++++x -> x----x
+    #long=1    long=2    long=3    long=4    long=-1   lim=2
+    #lim=0     lim=0     lim=0     lim=1     lim=1     phase de recherche
     x = cible[0]  #x=ligne, y = colonne
     y = cible[1]
     if lim == 0:
@@ -190,7 +192,7 @@ def tiriarandom(mat):  #recherche 100% aléatoire, peut tirer n'importe où
         try:
             x = random.randint(0, 9)
             y = random.randint(0, 9)
-            if mat[x][y][2] == 1:
+            if mat[x][y][2] == 1:#si on y a déjà tiré
                 raise ValueError
             mat[x][y][2] = 1
             print("l'ia a tiré en ", 'ABCDEFGHIJ'[y],str(x+1))

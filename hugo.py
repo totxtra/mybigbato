@@ -1,17 +1,5 @@
 import owen
 import clement
-import csv
-
-def leaderboard(ct,win) :
-    if win == 17 :
-        result = 'gagné'
-    else :
-        result = 'perdu'
-    print(f"Vous avez {result} en {ct} tours.")
-  
-
-#login()
-#register(login())
 
 
 def tir_joueur(carte_j) :
@@ -21,13 +9,24 @@ def tir_joueur(carte_j) :
         #demander ou l on veut tirer
         tir = input("Où voulez-vous tirer ? ")
         tir=tir.upper()
+        #définitions d un compteur
+        s = 0
         #parcourir la carte
         for i in range(len(carte_j)) :
             for j in range (len(carte_j[i])) :
                 #vérifie si la case existe
+                s+=1
                 if tir == carte_j[i][j][0] :
                     #vérifie si il y a deja eu un tire sur l'emplacement choisie
                     if 0 == carte_j[i][j][2] :
                         carte_j[i][j][2] = 1
                         test_g = 1
-    return carte_j
+                    else :
+                      print('/!\ Capitaine, vous avez déjà tiré ici !')
+                      s=0
+                if s == 100 :
+                  print("/!\ Vous avez tiré en terre inconnue, le cannonier n'a pas compris votre ordre !")         
+    return carte_j, tir
+
+
+#fonction rejouer créée par Hugo
