@@ -25,16 +25,15 @@ def choix_difficulte():
 	return diff
 
 
-def round(ecranj, ecrania, pIA, difficulte, ct, ptsjoueur, ptsia, coordj,
-          coordia):
-	print(
-	    owen.afficher(ecranj, 0),
-	    f"\nLe joueur a {ptsjoueur} pts\nL'ordinateur a {ptsia} pts\n")
-	tir_j = hugo.tir_joueur(ecranj)
-	ecranj = tir_j[0]
-	coord_tir = tir_j[1]
-	test_ptsjoueur = owen.verifpoints(ecranj)
-	if test_ptsjoueur != ptsjoueur:
+def round(ecranj, ecrania, pIA, difficulte, ct, ptsjoueur, ptsia, coordj,coordia, jsp, coulé):
+    print(owen.afficher(ecranj, 0),f"\nLe joueur a {ptsjoueur} pts\nL'ordinateur a {ptsia} pts\n")
+    if jsp == 1:
+        print(coulé[0])
+    tir_j = hugo.tir_joueur(ecranj)
+    ecranj = tir_j[0]
+    coord_tir = tir_j[1]
+    test_ptsjoueur = owen.verifpoints(ecranj)
+    if test_ptsjoueur != ptsjoueur:
 		print("Vous avez touché l'ennemi !")
 		coordj = maxime.touche(coord_tir, coordj)
 		coulé = maxime.test_coule(coordj)
@@ -57,12 +56,12 @@ def round(ecranj, ecrania, pIA, difficulte, ct, ptsjoueur, ptsia, coordj,
 		coordia = maxime.touche(coord_tir, coordia)
 		coulé = maxime.test_coule(coordia)
 		if coulé != False:
-			print(coulé[0])
 			coordia[coulé[1]].append("coulé")
+            jsp = 1
 	ptsia = test_ptsia
 	print("Bateaux de l'ordinateur :")
 	ct += 1
-	return ecranj, ecrania, pIA, ct, ptsjoueur, ptsia, coordj, coordia
+	return ecranj, ecrania, pIA, ct, ptsjoueur, ptsia, coordj, coordia, jsp, coulé
 
 
 def main():
@@ -83,23 +82,24 @@ def main():
 	    ecrania, 'recherche'
 	]  #ensemble de paramètres pour l'ia, le premier étant sa matrice de jeu et le 2eme son état, 'recherche','touché' ou 'traque', et certaines valeurs seront ajoutées après certaines phases: la cible, l'orientation de la cible, puis le parametre long, voir fonction traque() par Owen
 	ct = 1
+    jsp,coulé = 0,0
 	while ptsjoueur != 17 and ptsia != 17:  #17=place totale prise par les bateaux
-		ecranj, ecrania, pIA, ct, ptsjoueur, ptsia, coordonneesj, coordonneesia = round(
+		ecranj, ecrania, pIA, ct, ptsjoueur, ptsia, coordonneesj, coordonneesia, jsp, coulé = round(
 		    ecranj, ecrania, pIA, difficulte, ct, ptsjoueur, ptsia,
-		    coordonneesj, coordonneesia)
+		    coordonneesj, coordonneesia, jsp,coulé)
 	print(clement.resultat(ptsjoueur, ptsia))
 
 
 if __name__ == "__main__":
-	play = 1
+    play = 1
 	#rejouer ?
-	while play == 1:
-		main()
-		print("Voulez-vous rejouer ?")
-		test_y = 0
+    while play == 1:
+        main()
+        print("Voulez-vous rejouer ?")
+        test_y = 0
 		#demande si l utilisateur rejoue
-		while test_y == 0:
-			try :
+        while test_y == 0:
+            try:
                 s = input("Taper 1 pour rejouer et 0 pour arreter : ")
                 if s != '1' and s != '0':
                     print('Capitaine, ne vous déconcentrez pas !! Vous devez taper 1 ou 0 !')
@@ -107,6 +107,5 @@ if __name__ == "__main__":
                     test_y = 1
             except :
                 print("Capitaine, ne vous déconcentrez pas !! Vous devez taper 1 ou 0 !")
-      #verifie si l utilisateur a entrer 1 ou 0
 
-		play = s
+        play = s
