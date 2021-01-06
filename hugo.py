@@ -1,7 +1,3 @@
-import owen
-import clement
-
-
 def tir_joueur(carte_j) :
     test_g = 0
     while test_g == 0 :
